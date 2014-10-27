@@ -12,7 +12,7 @@ Puppet::Type.type(:rabbitmq_user).provide(:rabbitmqctl) do
   defaultfor :feature => :posix
 
   def self.instances
-    rabbitmqctl('list_users').split(/\n/)[1..-2].collect do |line|
+    rabbitmqctl('-q', 'list_users').split(/\n/).collect do |line|
       if line =~ /^(\S+)(\s+\S+|)$/
         new(:name => $1)
       else
@@ -33,7 +33,7 @@ Puppet::Type.type(:rabbitmq_user).provide(:rabbitmqctl) do
   end
 
   def exists?
-    rabbitmqctl('list_users').split(/\n/)[1..-2].detect do |line|
+    rabbitmqctl('-q', 'list_users').split(/\n/).detect do |line|
       line.match(/^#{Regexp.escape(resource[:name])}(\s+\S+|)$/)
     end
   end
